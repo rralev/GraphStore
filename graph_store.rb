@@ -6,7 +6,7 @@ before do
 end
 
 get '/' do
-  "List all graphs"
+  "List api info/documentation"
   #TODO: OR list documentation
 end
 
@@ -16,18 +16,23 @@ get '/list' do #or /graphs
 end
 
 #TODO: add new graph
+#after that add nodes and edges
 post '/new' do
-  "new"
+  graph_name = params[:name]
+  File.write(graph_name, params.to_json)
 end
 
 #TODO: rename existing graph
 put '/rename' do
-  "rename"
+  old_name = params[:old_name]
+  new_name = params[:new_name]
+  File.rename(old_name, new_name)
 end
 
 #TODO: delete graph
 delete '/delete' do
-  "delete"
+  graph_name = params[:name]
+  File.delete(graph_name)
 end
 
 #TODO:search graph
