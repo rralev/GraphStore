@@ -95,7 +95,7 @@ get '/search/:query' do
   {graphs: graphs_names}.to_json
 end
 
-post '/add/edge/:graph_name/:u/:v' do
+post '/add/edge' do
   graph_name = params[:graph_name]
   u = params[:u]
   v = params[:v]
@@ -110,8 +110,19 @@ post '/add/edge/:graph_name/:u/:v' do
   200
 end
 
-#TODO: add vertex
+#TODO: combine with the method above
 post '/add/vertex' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  halt 400 if graph_name == nil || u == nil
+
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  graph[u] = nil
+  File.write(file, graph.to_json)
+
+  200
 end
 
 #TODO: delete edge
