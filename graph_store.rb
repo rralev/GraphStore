@@ -22,13 +22,16 @@ error 500...600 do
   {error: "Internal server error!"}.to_json
 end
 
+#TODO:documentation
 get '/' do
-  {graphs: Dir.entries("/graphs")}.to_json
+  "documentation"
 end
 
-#TODO: List all graph names
-get '/list' do #or /graphs
-  "list"
+get '/list' do
+  graph_names = Dir["graphs/*"].map { |file|
+    File.basename(file)
+  }
+  {graphs: graph_names}.to_json
 end
 
 post '/new' do
@@ -74,7 +77,6 @@ delete '/delete' do
   end
 end
 
-#TODO:search graph
 get '/search/:name' do
   "search"
 end
