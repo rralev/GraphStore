@@ -23,8 +23,7 @@ error 500...600 do
 end
 
 get '/' do
-  "List api info/documentation"
-  #TODO: OR list documentation
+  {graphs: Dir.entries("/graphs")}.to_json
 end
 
 #TODO: List all graph names
@@ -37,6 +36,7 @@ post '/new' do
 
   halt 400 if graph_name == nil
 
+  graph_name = "graphs/#{graph_name}"
   if File.exist?(graph_name)
     halt 409
   else
@@ -50,6 +50,9 @@ put '/rename' do
 
   halt 400 if old_name == nil || new_name == nil
 
+  old_name = "graphs/#{old_name}"
+  new_name = "graphs/#{new_name}"
+
   if File.exist?(old_name)
     File.rename(old_name, new_name)
   else
@@ -61,6 +64,8 @@ delete '/delete' do
   graph_name = params[:name]
 
   halt 400 if graph_name == nil
+
+  graph_name = "graphs/#{graph_name}"
 
   if File.exist?(graph_name)
     File.delete(graph_name)
