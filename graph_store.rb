@@ -45,6 +45,8 @@ post '/new' do
   else
     File.write(graph_name, params.to_json)
   end
+
+  200
 end
 
 put '/rename' do
@@ -61,6 +63,8 @@ put '/rename' do
   else
     halt 404
   end
+
+  200
 end
 
 delete '/delete' do
@@ -75,11 +79,14 @@ delete '/delete' do
   else
     halt 404
   end
+
+  200
 end
 
 get '/search/:query' do
   query = params[:query]
   halt 400 if query == nil
+  #query.downcase! Ask Agi for it
 
   graphs_names = Dir["graphs/*#{query}*"].map { |file|
     File.basename(file)
@@ -88,8 +95,19 @@ get '/search/:query' do
   {graphs: graphs_names}.to_json
 end
 
-#TODO: add edge
-post '/add/edge' do
+post '/add/edge/:graph_name/:u/:v' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  v = params[:v]
+  halt 400 if graph_name == nil || u == nil || v == nil
+
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  graph[u] = v;
+  File.write(file, graph.to_json)
+
+  200
 end
 
 #TODO: add vertex
