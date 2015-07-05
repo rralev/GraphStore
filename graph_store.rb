@@ -160,8 +160,25 @@ delete '/delete/vertex' do
   200
 end
 
-#TODO: update edge
+#TODO: we can provide vertex that does not exist
 put '/update/edge' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  v = params[:v]
+  new_u = params[:new_u]
+  new_v = params[:new_v]
+
+  halt 400 if graph_name == nil || u == nil || v == nil || new_u == nil || new_v == nil
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  halt 400 if graph[u] == nil || !graph[u].include?(v)
+  graph[u].map! { |e|
+    e == v ? new_v : e
+  }
+  graph[new_u] = graph[u]
+  graph.delete(u)
+  File.write(file, graph.to_json)
 end
 
 #TODO: update vertex
