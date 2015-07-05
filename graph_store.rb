@@ -95,6 +95,7 @@ get '/search/:query' do
   {graphs: graphs_names}.to_json
 end
 
+#TODO: 1 -> 2 ; 1 -> 3
 post '/add/edge' do
   graph_name = params[:graph_name]
   u = params[:u]
@@ -104,7 +105,8 @@ post '/add/edge' do
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   graph = JSON.parse(File.read(file))
-  graph[u] = v;
+  graph[u] = [] if graph[u] == nil
+  graph[u].push(v)
   File.write(file, graph.to_json)
 
   200
@@ -119,14 +121,27 @@ post '/add/vertex' do
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   graph = JSON.parse(File.read(file))
-  graph[u] = nil
+  halt 400 if graph[u] != nil
+  graph[u] = []
   File.write(file, graph.to_json)
 
   200
 end
 
-#TODO: delete edge
+#deletes all 1 -> 2, 1 -> 2
 delete '/delete/edge' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  v = params[:v]
+  halt 400 if graph_name == nil || u == nil || v == nil
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  halt 400 if graph[u] == nil
+  graph[u].delete(v)
+  File.write(file, graph.to_json)
+
+  200
 end
 
 #TODO: delete vertex
@@ -145,7 +160,7 @@ end
 get '/search/vertex/:name' do
 end
 
-#TODO: serch vertex
+#TODO: serch edge
 get '/search/vertex/:u/:v' do
 end
 
