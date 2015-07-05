@@ -77,8 +77,15 @@ delete '/delete' do
   end
 end
 
-get '/search/:name' do
-  "search"
+get '/search/:query' do
+  query = params[:query]
+  halt 400 if query == nil
+
+  graphs_names = Dir["graphs/*#{query}*"].map { |file|
+    File.basename(file)
+  }
+
+  {graphs: graphs_names}.to_json
 end
 
 #TODO: add edge
