@@ -144,8 +144,20 @@ delete '/delete/edge' do
   200
 end
 
-#TODO: delete vertex
 delete '/delete/vertex' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  halt 400 if graph_name == nil || u == nil
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  graph.delete(u)
+  graph.map { |_key, value|
+    value.delete(u)
+  }
+  File.write(file, graph.to_json)
+
+  200
 end
 
 #TODO: update edge
