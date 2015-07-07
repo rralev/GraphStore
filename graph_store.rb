@@ -36,14 +36,13 @@ end
 
 post '/new' do
   graph_name = params[:name]
-
   halt 400 if graph_name == nil
 
   graph_name = "graphs/#{graph_name}"
   if File.exist?(graph_name)
     halt 409
   else
-    File.write(graph_name, params.to_json)
+    File.write(graph_name, "")
   end
 
   200
@@ -86,7 +85,6 @@ end
 get '/search/:query' do
   query = params[:query]
   halt 400 if query == nil
-  #query.downcase! Ask Agi for it
 
   graphs_names = Dir["graphs/*#{query}*"].map { |file|
     File.basename(file)
@@ -112,7 +110,6 @@ post '/add/edge' do
   200
 end
 
-#TODO: combine with the method above
 post '/add/vertex' do
   graph_name = params[:graph_name]
   u = params[:u]
@@ -128,7 +125,6 @@ post '/add/vertex' do
   200
 end
 
-#deletes all 1 -> 2, 1 -> 2
 delete '/delete/edge' do
   graph_name = params[:graph_name]
   u = params[:u]
@@ -160,14 +156,13 @@ delete '/delete/vertex' do
   200
 end
 
-#TODO: we can provide vertex that does not exist
 put '/update/edge' do
   graph_name = params[:graph_name]
   u = params[:u]
   v = params[:v]
   new_v = params[:new_v]
-
   halt 400 if graph_name == nil || u == nil || v == nil || new_v == nil
+
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   graph = JSON.parse(File.read(file))
@@ -180,8 +175,27 @@ put '/update/edge' do
   200
 end
 
-#TODO: update vertex
 put '/update/vertex' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  new_u = params[:new_u]
+  halt 400 if graph_name == nil || u == nil || new_u == nil
+
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  halt 400 if graph[u] == nil || graph[new_u] != nil
+  graph[new_u] = graph[u]
+  graph.delete(u)
+
+  graph.each { |key, my_array|
+     my_array.map! { |v|
+       v == u ? new_u : v
+     }
+  }
+  File.write(file, graph.to_json)
+
+  200
 end
 
 #TODO: serch vertex
