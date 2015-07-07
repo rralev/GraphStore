@@ -100,9 +100,7 @@ post '/add/edge' do
   v = params[:v]
   halt 400 if graph_name == nil || u == nil || v == nil
 
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+  graph = get_graph(graph_name)
   graph[u] = [] if graph[u] == nil
   graph[v] = [] if graph[v] == nil
   graph[u].push(v)
@@ -116,9 +114,7 @@ post '/add/vertex' do
   u = params[:u]
   halt 400 if graph_name == nil || u == nil
 
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+  graph = get_graph(graph_name)
   halt 400 if graph[u] != nil
   graph[u] = []
   File.write(file, graph.to_json)
@@ -131,9 +127,8 @@ delete '/delete/edge' do
   u = params[:u]
   v = params[:v]
   halt 400 if graph_name == nil || u == nil || v == nil
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+
+  graph = get_graph(graph_name)
   halt 400 if graph[u] == nil
   graph[u].delete(v)
   File.write(file, graph.to_json)
@@ -145,9 +140,8 @@ delete '/delete/vertex' do
   graph_name = params[:graph_name]
   u = params[:u]
   halt 400 if graph_name == nil || u == nil
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+
+  graph = get_graph(graph_name)
   graph.delete(u)
   graph.map { |_key, value|
     value.delete(u)
@@ -164,9 +158,7 @@ put '/update/edge' do
   new_v = params[:new_v]
   halt 400 if graph_name == nil || u == nil || v == nil || new_v == nil
 
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+  graph = get_graph(graph_name)
   halt 400 if graph[u] == nil || !graph[u].include?(v)
   graph[u].map! { |e|
     e == v ? new_v : e
@@ -182,9 +174,7 @@ put '/update/vertex' do
   new_u = params[:new_u]
   halt 400 if graph_name == nil || u == nil || new_u == nil
 
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+  graph = get_graph(graph_name)
   halt 400 if graph[u] == nil || graph[new_u] != nil
   graph[new_u] = graph[u]
   graph.delete(u)
@@ -204,9 +194,7 @@ get '/search/vertex/:graph_name/:u' do
   u = params[:u]
   halt 400 if graph_name == nil || u == nil
 
-  file = "graphs/#{graph_name}"
-  halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
+  graph = get_graph(graph_name)
   graph[u] == nil ? false.to_json : true.to_json
 end
 
@@ -216,10 +204,14 @@ get '/search/edge/:graph_name/:u/:v' do
   v = params[:v]
   halt 400 if graph_name == nil || u == nil || v == nil
 
+  graph = get_graph(graph_name)
+  graph[u] != nil && graph[u].include?(v) ? true.to_json : false.to_json
+end
+
+def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
-  graph = JSON.parse(File.read(file))
-  graph[u] != nil && graph[u].include?(v) ? true.to_json : false.to_json
+  JSON.parse(File.read(file))
 end
 
 #TODO: and more alghorithms
