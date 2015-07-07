@@ -203,13 +203,23 @@ get '/search/vertex/:graph_name/:u' do
   graph_name = params[:graph_name]
   u = params[:u]
   halt 400 if graph_name == nil || u == nil
+
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   graph = JSON.parse(File.read(file))
   graph[u] == nil ? false.to_json : true.to_json
 end
 
-get '/search/edge/:u/:v' do
+get '/search/edge/:graph_name/:u/:v' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  v = params[:v]
+  halt 400 if graph_name == nil || u == nil || v == nil
+
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  graph[u] != nil && graph[u].include?(v) ? true.to_json : false.to_json
 end
 
 #TODO: and more alghorithms
