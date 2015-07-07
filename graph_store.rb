@@ -42,7 +42,7 @@ post '/new' do
   if File.exist?(graph_name)
     halt 409
   else
-    File.write(graph_name, "")
+    File.write(graph_name, "{}")
   end
 
   200
@@ -104,6 +104,7 @@ post '/add/edge' do
   halt 404 if !File.exist?(file)
   graph = JSON.parse(File.read(file))
   graph[u] = [] if graph[u] == nil
+  graph[v] = [] if graph[v] == nil
   graph[u].push(v)
   File.write(file, graph.to_json)
 
@@ -188,8 +189,8 @@ put '/update/vertex' do
   graph[new_u] = graph[u]
   graph.delete(u)
 
-  graph.each { |key, my_array|
-     my_array.map! { |v|
+  graph.each { |key, list|
+     list.map! { |v|
        v == u ? new_u : v
      }
   }
@@ -198,11 +199,16 @@ put '/update/vertex' do
   200
 end
 
-#TODO: serch vertex
-get '/search/vertex/:name' do
+get '/search/vertex/:graph_name/:u' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  halt 400 if graph_name == nil || u == nil
+  file = "graphs/#{graph_name}"
+  halt 404 if !File.exist?(file)
+  graph = JSON.parse(File.read(file))
+  graph[u] == nil ? false.to_json : true.to_json
 end
 
-#TODO: search edge
 get '/search/edge/:u/:v' do
 end
 
