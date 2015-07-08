@@ -208,10 +208,32 @@ get '/search/edge/:graph_name/:u/:v' do
   graph[u] != nil && graph[u].include?(v) ? true.to_json : false.to_json
 end
 
+get '/dfs/:graph_name/:vertex' do
+  graph_name = params[:graph_name]
+  vertex = params[:vertex]
+  halt 400 if graph_name == nil
+
+  $used = {}
+  $list = []
+  $graph = get_graph(graph_name)
+  dfs(vertex)
+
+  $list.to_json
+end
+
 def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   JSON.parse(File.read(file))
 end
 
-#TODO: and more alghorithms
+def dfs(u)
+  $used[u] = 1
+  $list << u
+
+  $graph[u].each { |v|
+    dfs(v) if $used[v] == nil
+  } if $graph[u] != nil
+
+  $used[u] = 2
+end
