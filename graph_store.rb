@@ -75,7 +75,6 @@ get '/search/:query' do
   {graphs: graphs_names}.to_json
 end
 
-#TODO: 1 -> 2 ; 1 -> 3
 post '/add/edge' do
   graph_name = params[:graph_name]
   u = params[:u]
@@ -86,7 +85,7 @@ post '/add/edge' do
   graph[u] = [] if graph[u] == nil
   graph[v] = [] if graph[v] == nil
   graph[u].push(v)
-  File.write(file, graph.to_json)
+  save_graph(graph_name, graph)
 
   200
 end
@@ -99,7 +98,7 @@ post '/add/vertex' do
   graph = get_graph(graph_name)
   halt 400 if graph[u] != nil
   graph[u] = []
-  File.write(file, graph.to_json)
+  save_graph(graph_name, graph)
 
   200
 end
@@ -113,7 +112,7 @@ delete '/delete/edge' do
   graph = get_graph(graph_name)
   halt 400 if graph[u] == nil
   graph[u].delete(v)
-  File.write(file, graph.to_json)
+  save_graph(graph_name, graph)
 
   200
 end
@@ -128,7 +127,7 @@ delete '/delete/vertex' do
   graph.map { |_key, value|
     value.delete(u)
   }
-  File.write(file, graph.to_json)
+  save_graph(graph_name, graph)
 
   200
 end
@@ -145,7 +144,7 @@ put '/update/edge' do
   graph[u].map! { |e|
     e == v ? new_v : e
   }
-  File.write(file, graph.to_json)
+  save_graph(graph_name, graph)
 
   200
 end
@@ -166,7 +165,7 @@ put '/update/vertex' do
        v == u ? new_u : v
      }
   }
-  File.write(file, graph.to_json)
+  save_graph(graph_name, graph)
 
   200
 end
@@ -210,8 +209,26 @@ get '/bfs/:graph_name/:vertex' do
   bfs.compute(vertex).to_json
 end
 
+get '/path/:graph_name/:u/:v' do
+  graph_name = params[:graph_name]
+  u = params[:u]
+  v = params[:v]
+  halt 400 if graph_name == nil || u == nil || v == nil
+
+  graph = get_graph(graph_name)
+  bfs = Bfs.new(graph)
+  #bfs.get
+end
+
 def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   JSON.parse(File.read(file))
 end
+
+def save_graph(graph_name, graph)
+  file = "graphs/#{graph_name}"
+  File.write(file, graph.to_json)
+end
+
+#TODO: correct 404 pages
