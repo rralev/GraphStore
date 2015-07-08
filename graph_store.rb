@@ -217,7 +217,7 @@ get '/path/:graph_name/:u/:v' do
 
   graph = get_graph(graph_name)
   bfs = Bfs.new(graph)
-  #bfs.get
+  bfs.get_path_between_two_vertices(u, v).to_json
 end
 
 def get_graph(graph_name)
