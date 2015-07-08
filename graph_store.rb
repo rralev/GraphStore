@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
 require './dfs.rb'
+require './bfs.rb'
 
 before do
     content_type 'application/json'
@@ -215,7 +216,6 @@ get '/dfs/:graph_name/:vertex' do
   halt 400 if graph_name == nil
 
   graph = get_graph(graph_name)
-
   dfs = Dfs.new(graph)
   dfs.compute(vertex).to_json
 end
@@ -226,33 +226,12 @@ get '/bfs/:graph_name/:vertex' do
   halt 400 if graph_name == nil
 
   graph = get_graph(graph_name)
-  bfs(graph, vertex).to_json
+  bfs = Bfs.new(graph)
+  bfs.compute(vertex).to_json
 end
 
 def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
   JSON.parse(File.read(file))
-end
-
-def bfs(graph, vertex)
-  queue = Queue.new
-  queue << vertex
-  used = {}
-  used[vertex] = 1
-  list = []
-
-  while queue.size > 0 do
-    front = queue.pop
-    list << front
-
-    graph[front].each { |v|
-      if used[v] == nil
-        queue << v
-        used[v] = 1
-      end
-    } if graph[front] != nil
-  end
-
-  list
 end
