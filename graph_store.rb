@@ -220,6 +220,16 @@ get '/path/:graph_name/:u/:v' do
   bfs.get_path_between_two_vertices(u, v).to_json
 end
 
+get '/successors/:graph_name/:vertex' do
+  graph_name = params[:graph_name]
+  vertex = params[:vertex]
+  halt 400 if graph_name == nil || vertex == nil
+
+  graph = get_graph(graph_name)
+  #TODO:Vertex does not exist
+  graph[vertex].to_json
+end
+
 def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
