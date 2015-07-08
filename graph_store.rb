@@ -221,6 +221,15 @@ get '/dfs/:graph_name/:vertex' do
   $list.to_json
 end
 
+get '/bfs/:graph_name/:vertex' do
+  graph_name = params[:graph_name]
+  vertex = params[:vertex]
+  halt 400 if graph_name == nil
+
+  graph = get_graph(graph_name)
+  bfs(graph, vertex).to_json
+end
+
 def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
@@ -236,4 +245,26 @@ def dfs(u)
   } if $graph[u] != nil
 
   $used[u] = 2
+end
+
+def bfs(graph, vertex)
+  queue = Queue.new
+  queue << vertex
+  used = {}
+  used[vertex] = 1
+  list = []
+
+  while queue.size > 0 do
+    front = queue.pop
+    list << front
+
+    graph[front].each { |v|
+      if used[v] == nil
+        queue << v
+        used[v] = 1
+      end
+    } if graph[front] != nil
+  end
+
+  list
 end
