@@ -230,6 +230,17 @@ get '/successors/:graph_name/:vertex' do
   graph[vertex].to_json
 end
 
+get '/cycles/:graph_name/:vertex' do
+  graph_name = params[:graph_name]
+  vertex = params[:vertex]
+  halt 400 if graph_name == nil
+
+  graph = get_graph(graph_name)
+  dfs = Dfs.new(graph)
+  dfs.compute(vertex)
+  dfs.get_cycles.to_json
+end
+
 def get_graph(graph_name)
   file = "graphs/#{graph_name}"
   halt 404 if !File.exist?(file)
