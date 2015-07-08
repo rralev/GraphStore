@@ -2,27 +2,7 @@ require 'sinatra'
 require 'json'
 require './dfs.rb'
 require './bfs.rb'
-
-before do
-    content_type 'application/json'
-end
-
-#TODO: other message when request is not found ex: post delete
-not_found do
-  {error: "Graph not found!"}.to_json
-end
-
-error 400 do
-  {error: "Invalid request!"}.to_json
-end
-
-error 409 do
-  {error: "Graph with provided name already exists!"}.to_json
-end
-
-error 500...600 do
-  {error: "Internal server error!"}.to_json
-end
+require './errors.rb'
 
 #TODO:documentation
 get '/' do
