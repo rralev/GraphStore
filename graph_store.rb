@@ -17,7 +17,7 @@ get '/list' do
 end
 
 post '/new' do
-  graph_name = params[:name]
+  graph_name = params[:graph_name]
   halt 400 if graph_name == nil
 
   graph_name = "graphs/#{graph_name}"
