@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>
+      GraphStore API documentation
+    </title>
+  </head>
+  <body>
+    <dl>
+      <dt>get '/'</dt>
+      <dd>Returns documentation.</dd>
+
+      <dt>get '/list'</dt>
+      <dd>Returns list of all graphs.</dd>
+
+      <dt>post '/new'</dt>
+      <dd>Create new graph (key: graph_name, value: the name of the graph you want to create).</dd>
+
+      <dt>put '/rename'</dt>
+      <dd>Rename an existing graph (key: old_name, value: name of the graph you want to rename; key: new_name, value: new name of the graph)</dd>
+
+      <dt>delete '/delete'</dt>
+      <dd>Delete existing graph (key: graph_name, value: the name of the graph you want to delete )</dd>
+
+      <dt>get '/search/query'</dt>
+      <dd>Search for a graph by name or part of the name</dd>
+
+      <dt>post '/add/edge'</dt>
+      <dd>Add new edge (key: graph_name, value: name of the graph where we want to add new edge; key: u, value: the unique key of the 1st vertex; key: v, value: the unique key of the 2nd vertex)</dd>
+
+      <dt>post '/add/vertex'</dt>
+      <dd>Add new vertex (key: graph_name, value: name of the graph where we want to add new vertex; key: u, value: the unique key of the vertex)</dd>
+
+      <dt>delete '/delete/edge'</dt>
+      <dd>Delete existing edge (key: graph_name, value: name of the graph where we want to delete an edge; key: u, value: unique key of the 1st vertex; key: v, unique key of the 2nd vertex)</dd>
+
+      <dt>delete '/delete/vertex'</dt>
+      <dd>Delete existing vertex (key: graph_name, value: name of the graph where we want to delete a vertex; key: u, value: the unique key of the vertex we want to delete)</dd>
+
+      <dt>update '/update/edge'</dt>
+      <dd>Update existing edge (key: graph_name, value: name of the graph where we want to update an edge; key: u, value: the unique key of the 1st vertex; key: v, value: the unique key of the 2nd vertex; key: new_v, value: the new unique key we want to put for the 2nd vertex of the edge)</dd>
+
+      <dt>update '/update/vertex'</dt>
+      <dd>Change a vertex's unique key (key: graph_name, value: the name of the graph where you want to update a vertex; key: u, value: the unique key of the vertex you want to update; key: new_u, value: the new the unique key of the vertex)</dd>
+
+      <dt>get '/search/vertex/:graph_name/:u'</dt>
+      <dd>Search for a vertex in a graph by providing its name and the unique key of the vertex you are searching for</dd>
+
+      <dt>get '/search/edge/:graph_name/:u/:v'</dt>
+      <dd>Search for an edge in a graph by providing its name and the unique keys of the vertices of the edge you are searching for</dd>
+
+      <dt>get '/successors/:graph_name/:vertex'</dt>
+      <dd>Returns all the successors of a vertex of a graph by providing its name and the vertex</dd>
+
+      <dt>get '/path/:graph_name/:u/:v'</dt>
+      <dd>Returns the shortest path between two vertices u and v (with path length measured by number of edges</dd>
+    </dl>
+  </body>
+</html>

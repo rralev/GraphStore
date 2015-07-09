@@ -6,7 +6,8 @@ require './errors.rb'
 
 #TODO:documentation
 get '/' do
-  "documentation"
+  content_type 'text/html'
+  File.read('public/index.html')
 end
 
 get '/list' do
